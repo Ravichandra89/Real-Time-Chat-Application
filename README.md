@@ -5,6 +5,10 @@ This is a scalable and secure real-time chat application built using Node.js, We
 
 ---
 
+## Requirements
+<img width="1140" alt="Screenshot 2024-12-12 at 8 46 33 PM" src="https://github.com/user-attachments/assets/d1e0701f-66e3-4567-abe8-23dcdaf8aa7e" />
+
+
 ## Tech Stack
 
 ### **Backend**
