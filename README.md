@@ -13,11 +13,13 @@ This is a scalable and secure real-time chat application built using Node.js, We
 
 ### **Backend**
 - **Node.js**: Server runtime for handling chat logic and APIs.
+- **TypeScript**: Server Side Language for application.
 - **WebSockets**: Real-time bi-directional communication.
 - **Redis**: Pub/Sub system for managing online users and routing messages.
 - **PostgreSQL**: Database for storing user data, messages, and group details.
 - **Firebase Cloud Messaging (FCM)**: Push notifications for offline users.
 - **JWT**: Authentication and authorization.
+- **WebRTC**: For Vedio calling feature.
 
 ### **DevOps**
 - **Docker**: Containerization of backend services.
