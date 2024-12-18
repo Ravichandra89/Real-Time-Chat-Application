@@ -35,12 +35,12 @@ This is a scalable and secure real-time chat application built using Node.js, We
 ---
 
 ## Application Flow
-1. **User Connection**: Users connect to WebSocket servers distributed across geo-locations for optimal performance.
-2. **Message Routing**: WebSocket servers use Redis to identify where the recipient is connected and deliver messages in real time.
-3. **Offline Messages**: Messages for offline users are stored in MongoDB and delivered when the recipient reconnects.
-4. **Push Notifications**: Firebase Cloud Messaging notifies offline users of pending messages.
-5. **Scalability**: Kubernetes ensures horizontal scaling, handling increased traffic efficiently.
-6. **Security**: All communications are encrypted, and sensitive user data is protected with secure protocols.
+1. **User Connection**: Users connect to WebSocket Servers via a Load Balancer, ensuring geo-distributed and optimal performance.
+2. **Message Routing**: WebSocket Servers query Redis to locate recipient connections and route messages in real time.
+3. **Offline Messages**:Undelivered messages are stored in the Database Server (MySQL) and delivered once users reconnect.
+4. **Push Notifications**: Offline users are notified of pending messages via Firebase Cloud Messaging (FCM).
+5. **Scalability**: Kubernetes enables horizontal scaling to handle increased traffic and load efficiently.
+6. **Security**: All communications are encrypted with secure protocols, ensuring user data protection.
 
 ---
 
