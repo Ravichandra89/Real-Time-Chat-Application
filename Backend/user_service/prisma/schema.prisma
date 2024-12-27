@@ -10,7 +10,7 @@ datasource db {
 model User {
   userId   String   @id @default(uuid())
   username String
-  email String @unique
+  email    String   @unique
   phone    String
   password String
   profile  String
@@ -24,6 +24,14 @@ model User {
   contactUsers     Contact[]     @relation("UserContacts_ContactUser")
   groupMemberships GroupMember[]
   adminGroups      Group[]       @relation("GroupAdmins")
+}
+
+model otp {
+  id        String   @id @default(uuid())
+  email     String
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model Contact {

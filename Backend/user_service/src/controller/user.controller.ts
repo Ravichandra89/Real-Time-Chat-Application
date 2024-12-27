@@ -3,8 +3,7 @@ import bcrypt from "bcrypt";
 import prisma from "../config/prisma.config";
 import apiResponse from "../utils/apiResponse";
 import jwt from "jsonwebtoken";
-import CryptoJs from "crypto-js";
-import nodemailer from "nodemailer";
+import { sendOtpEmail } from "../utils/EmailSender";
 
 const JWT_SECRET = process.env.SECRET || "chatApp";
 
@@ -138,9 +137,36 @@ export const forgotPassword = async (
       },
     });
 
-    const otp = 
+    if (!isValidUser) {
+      return apiResponse(res, 400, false, "Email is not registered");
+    }
+
+    // Sending otp
+    const otp = await sendOtpEmail(email);
+
+    return apiResponse(res, 200, true, "OTP sent successfully", { otp });
   } catch (error) {
     console.error("Error While forgot password", error);
     return apiResponse(res, 500, false, "Error while forgot password");
+  }
+};
+
+interface resetBody {
+  email: string;
+  otp: string;
+  newPassword: string;
+}
+
+export const resetPassword = async (
+  req: Request<{}, {}, resetBody>,
+  res: Response
+) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    
+  } catch (error) {
+    console.error("Error While reset password", error);
+    return apiResponse(res, 500, false, "Error while reset password");
   }
 };
