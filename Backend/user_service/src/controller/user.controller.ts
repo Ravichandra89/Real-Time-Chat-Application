@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { sendOtpEmail } from "../utils/EmailSender";
 
 const JWT_SECRET = process.env.SECRET || "chatApp";
+const otp_expiry_time = 10;
 
 interface RegisterBody {
   username: string;
@@ -143,6 +144,18 @@ export const forgotPassword = async (
 
     // Sending otp
     const otp = await sendOtpEmail(email);
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + otp_expiry_time);
+
+    // Save Otp for UserId
+    await prisma.otp.create({
+      data: {
+        userId: isValidUser.userId,
+        email,
+        otp,
+        expiresAt,
+      },
+    });
 
     return apiResponse(res, 200, true, "OTP sent successfully", { otp });
   } catch (error) {
@@ -164,9 +177,70 @@ export const resetPassword = async (
   try {
     const { email, otp, newPassword } = req.body;
 
-    
+    if (!email || !otp || !newPassword) {
+      return apiResponse(
+        res,
+        400,
+        false,
+        "Email, OTP, and New Password are required"
+      );
+    }
+
+    // Check if the user exists
+    const isValidUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!isValidUser) {
+      return apiResponse(res, 400, false, "Email is not registered");
+    }
+
+    // Find the OTP associated with the userId
+    const otpExist = await prisma.otp.findFirst({
+      where: {
+        userId: isValidUser.userId,
+      },
+    });
+
+    if (!otpExist) {
+      return apiResponse(res, 400, false, "OTP is not valid");
+    }
+
+    // Check if the OTP matches
+    if (otpExist.otp !== otp) {
+      return apiResponse(res, 404, false, "Invalid OTP");
+    }
+
+    // Check if the OTP has expired
+    if (new Date() > otpExist.expiresAt) {
+      return apiResponse(res, 400, false, "OTP has expired");
+    }
+
+    // Encrypt the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password
+    await prisma.user.update({
+      where: {
+        userId: isValidUser.userId,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    // Delete the OTP record after successful password reset
+    await prisma.otp.delete({
+      where: {
+        id: otpExist.id,
+      },
+    });
+
+    return apiResponse(res, 200, true, "Password Reset Successfully");
   } catch (error) {
-    console.error("Error While reset password", error);
-    return apiResponse(res, 500, false, "Error while reset password");
+    console.error("Error While resetting password", error);
+    return apiResponse(res, 500, false, "Error while resetting password");
   }
 };

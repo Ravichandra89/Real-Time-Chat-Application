@@ -24,14 +24,19 @@ model User {
   contactUsers     Contact[]     @relation("UserContacts_ContactUser")
   groupMemberships GroupMember[]
   adminGroups      Group[]       @relation("GroupAdmins")
+  otp              otp[]
 }
 
 model otp {
   id        String   @id @default(uuid())
+  userId    String
   email     String
   otp       String
   expiresAt DateTime
   createdAt DateTime @default(now())
+
+  // Relation
+  user User @relation(fields: [userId], references: [userId])
 }
 
 model Contact {

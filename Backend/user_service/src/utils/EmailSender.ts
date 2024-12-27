@@ -3,6 +3,8 @@ import crypto from "crypto";
 import apiResponse from "./apiResponse";
 import prisma from "../config/prisma.config";
 
+const otp_expiry = 10;
+
 const generateOtp = () => {
   return crypto.randomInt(100000, 999999).toString();
 };
