@@ -11,7 +11,7 @@ This is a scalable and secure real-time chat application built using Node.js, We
 ## System Design 
 ![image](https://github.com/user-attachments/assets/5b8160b0-9a13-4144-8fca-663da40e89eb)
 
-Exalidraw Link: https://excalidraw.com/#json=1Bo7cQC6SVzjC8u66ZF9h,EymzUf9Blgwyl7UwIRL4Eg
+
 
 ## Detailed Data Model Design
 <img width="1707" alt="Screenshot 2024-12-21 at 9 34 30 PM" src="https://github.com/user-attachments/assets/4acd391b-088e-4b23-8f86-bd8bc6f55583" />
