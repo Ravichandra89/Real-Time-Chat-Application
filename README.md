@@ -11,12 +11,14 @@ This is a scalable and secure real-time chat application built using Node.js, We
 ## System Design 
 ![image](https://github.com/user-attachments/assets/5b8160b0-9a13-4144-8fca-663da40e89eb)
 
-
-
 ## Detailed Data Model Design
 <img width="1707" alt="Screenshot 2024-12-21 at 9 34 30 PM" src="https://github.com/user-attachments/assets/4acd391b-088e-4b23-8f86-bd8bc6f55583" />
 
 Erase Link : https://app.eraser.io/workspace/uHFHHHQwyXJ2JjkNkTwU
+
+## Services Breakdown
+<img width="1276" alt="Screenshot 2025-01-02 at 11 28 36 PM" src="https://github.com/user-attachments/assets/c2dfb45e-68e3-42ce-8fa5-4c513bab86ae" />
+
 
 ## Tech Stack
 
