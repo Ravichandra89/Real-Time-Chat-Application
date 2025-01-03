@@ -1,8 +1,9 @@
-import {Router} from "express";
+import { Router } from "express";
+import { getUserPresence } from "../controller/presence.controller";
 
 const presenceRouter = Router();
 
-// TODO: Define here the routes
-
+// Define here routes
+presenceRouter.get("/:userId", getUserPresence);
 
 export default presenceRouter;
