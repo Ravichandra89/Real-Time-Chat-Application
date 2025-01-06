@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId   String   @id @default(uuid())
+  username String
+  email    String   @unique
+  phone    String
+  password String
+  profile  String
+  isActive Boolean
+  lastSeen DateTime
+
+  // User Relations
+  sentMessages     Message[]     @relation("SentMessages")
+  receivedMessages Message[]     @relation("ReceivedMessages")
+  contacts         Contact[]     @relation("UserContacts_User")
+  contactUsers     Contact[]     @relation("UserContacts_ContactUser")
+  groupMemberships GroupMember[]
+  adminGroups      Group[]       @relation("GroupAdmins")
+  otp              otp[]
+}
+
+model otp {
+  id        String   @id @default(uuid())
+  userId    String
+  email     String
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relation
+  user User @relation(fields: [userId], references: [userId])
+}
+
+model Contact {
+  contactId     String        @id @default(uuid())
+  userId        String
+  contactUserId String
+  isBlocked     Boolean       @default(false)
+  status        ContactStatus // Enum
+
+  // Relations
+  user        User @relation("UserContacts_User", fields: [userId], references: [userId])
+  contactUser User @relation("UserContacts_ContactUser", fields: [contactUserId], references: [userId])
+}
+
+enum ContactStatus {
+  Pending
+  Blocked
+  Friend
+}
+
+model Message {
+  messageId   String        @id @default(uuid())
+  senderId    String
+  receiverId  String
+  content     String
+  mediaUrl    String?
+  mediaType   MediaType
+  timeStamp   DateTime
+  status      MessageStatus
+  deliveredAt DateTime?
+  readAt      DateTime?
+
+  // Relation for Sender and Receiver
+  sender   User @relation("SentMessages", fields: [senderId], references: [userId])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [userId])
+}
+
+enum MediaType {
+  Text
+  Image
+  Video
+  Audio
+}
+
+enum MessageStatus {
+  Pending
+  Delivered
+  Read
+}
+
+model Group {
+  groupId   String   @id @default(uuid())
+  groupName String
+  picture   String?
+  adminId   String
+  createdAt DateTime @default(now())
+
+  admin   User          @relation("GroupAdmins", fields: [adminId], references: [userId])
+  members GroupMember[]
+}
+
+model GroupMember {
+  groupMemberId String    @id @default(uuid())
+  groupId       String
+  userId        String
+  joinDate      DateTime  @default(now())
+  role          GroupRole
+
+  // Relations
+  group Group @relation(fields: [groupId], references: [groupId])
+  user  User  @relation(fields: [userId], references: [userId])
+}
+
+enum GroupRole {
+  Member
+  Admin
+}

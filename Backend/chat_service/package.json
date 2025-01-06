@@ -10,6 +10,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^6.1.0",
+    "@types/redis": "^4.0.10",
+    "redis": "^4.7.0",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "prisma": "^6.1.0"
   }
 }
