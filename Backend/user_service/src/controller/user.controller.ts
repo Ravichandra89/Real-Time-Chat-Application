@@ -121,6 +121,7 @@ interface forgotBody {
   email: string;
 }
 
+// TODO: Did here the Token based Forgat Password and ResetPassword
 export const forgotPassword = async (
   req: Request<{}, {}, forgotBody>,
   res: Response
