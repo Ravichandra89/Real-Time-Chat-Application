@@ -17,7 +17,6 @@ model User {
   isActive Boolean
   lastSeen DateTime
 
-
   sentMessages     Message[]     @relation("SentMessages")
   receivedMessages Message[]     @relation("ReceivedMessages")
   contacts         Contact[]     @relation("UserContacts_User")
@@ -25,7 +24,7 @@ model User {
   groupMemberships GroupMember[]
   adminGroups      Group[]       @relation("GroupAdmins")
   otp              otp[]
-  archiveChats     ArchiveChat[] @relation("UserArchiveChats")  
+  archiveChats     ArchiveChat[] @relation("UserArchiveChats")
 }
 
 model otp {
@@ -45,7 +44,7 @@ model Contact {
   userId        String
   contactUserId String
   isBlocked     Boolean       @default(false)
-  status        ContactStatus 
+  status        ContactStatus
 
   // Relations
   user        User @relation("UserContacts_User", fields: [userId], references: [userId])
@@ -73,7 +72,7 @@ model Message {
   sender   User @relation("SentMessages", fields: [senderId], references: [userId])
   receiver User @relation("ReceivedMessages", fields: [receiverId], references: [userId])
 
-  archiveChats ArchiveChat[] @relation("MessageArchiveChats") 
+  archiveChats ArchiveChat[] @relation("MessageArchiveChats")
 }
 
 enum MediaType {
@@ -125,6 +124,25 @@ model ArchiveChat {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  user User   @relation("UserArchiveChats", fields: [userId], references: [userId])  
-  chat Message @relation("MessageArchiveChats", fields: [chatId], references: [messageId])  
+  user User    @relation("UserArchiveChats", fields: [userId], references: [userId])
+  chat Message @relation("MessageArchiveChats", fields: [chatId], references: [messageId])
+}
+
+// Blocking and Muting Users
+model BlockUser {
+  id        String   @id @default(uuid())
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+}
+
+model MuteUser {
+  Id      String @id @default(uuid())
+  muterId String
+  mutedId String
+  createdAt DateTime @default(now())
+
+  @@unique([muterId, mutedId])
 }

@@ -9,4 +9,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser());
 
+// Define Here the Routes
+
 export default app;
