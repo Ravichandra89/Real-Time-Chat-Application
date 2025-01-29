@@ -17,7 +17,7 @@ model User {
   isActive Boolean
   lastSeen DateTime
 
-  // User Relations
+
   sentMessages     Message[]     @relation("SentMessages")
   receivedMessages Message[]     @relation("ReceivedMessages")
   contacts         Contact[]     @relation("UserContacts_User")
@@ -25,6 +25,7 @@ model User {
   groupMemberships GroupMember[]
   adminGroups      Group[]       @relation("GroupAdmins")
   otp              otp[]
+  archiveChats     ArchiveChat[] @relation("UserArchiveChats")  
 }
 
 model otp {
@@ -44,7 +45,7 @@ model Contact {
   userId        String
   contactUserId String
   isBlocked     Boolean       @default(false)
-  status        ContactStatus // Enum
+  status        ContactStatus 
 
   // Relations
   user        User @relation("UserContacts_User", fields: [userId], references: [userId])
@@ -69,9 +70,10 @@ model Message {
   deliveredAt DateTime?
   readAt      DateTime?
 
-  // Relation for Sender and Receiver
   sender   User @relation("SentMessages", fields: [senderId], references: [userId])
   receiver User @relation("ReceivedMessages", fields: [receiverId], references: [userId])
+
+  archiveChats ArchiveChat[] @relation("MessageArchiveChats") 
 }
 
 enum MediaType {
@@ -113,4 +115,16 @@ model GroupMember {
 enum GroupRole {
   Member
   Admin
+}
+
+model ArchiveChat {
+  archiveId  String   @id @default(uuid())
+  userId     String   @map("user_id")
+  chatId     String   @map("chat_id")
+  isArchived Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User   @relation("UserArchiveChats", fields: [userId], references: [userId])  
+  chat Message @relation("MessageArchiveChats", fields: [chatId], references: [messageId])  
 }
