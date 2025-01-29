@@ -1,4 +1,5 @@
 import WebSocket, { WebSocketServer } from "ws";
+import prisma from "../config/prisma.config";
 import redisClient from "../config/redis";
 import {
   setUserPresenceOnline,
@@ -6,33 +7,31 @@ import {
 } from "../controller/presence.controller";
 import http from "http";
 
+const userSocket = new Map<string, WebSocket>(); // Store userId -> WebSocket mapping
+
 const webSocketSetUp = (server: http.Server) => {
-  // Create a WebSocket server
   const wss = new WebSocketServer({ server });
 
-  // Handle WebSocket connection
   wss.on("connection", async (socket, req) => {
     console.log(`User connected with WebSocket`);
 
-    // Extract userId from query params
     const urlParams = new URLSearchParams(req.url?.split("?")[1]);
     const userId = urlParams.get("userId");
 
     if (!userId) {
       console.error("Missing userId in WebSocket handshake");
-      socket.close(4001, "Missing userId"); // Close connection with an error code
+      socket.close(4001, "Missing userId");
       return;
     }
 
-    // Mark the user as online
+    userSocket.set(userId, socket);
+
     try {
       await setUserPresenceOnline(userId);
       console.log(`{WebSocket} user presence marked Online for ${userId}`);
 
-      // Notify all clients about the presence update
       broadcast(wss, JSON.stringify({ userId, status: "online" }));
 
-      // Handle incoming messages (optional, can add custom logic here)
       socket.on("message", (message) => {
         console.log(`Received message from ${userId}: ${message}`);
       });
@@ -40,6 +39,9 @@ const webSocketSetUp = (server: http.Server) => {
       // Handle WebSocket disconnection
       socket.on("close", async () => {
         console.log(`{WebSocket} User disconnected: ${userId}`);
+
+        // Remove from active sockets
+        userSocket.delete(userId);
 
         // Mark the user as offline
         await setUserPresenceOffline(userId);
@@ -50,16 +52,37 @@ const webSocketSetUp = (server: http.Server) => {
       });
     } catch (error) {
       console.error(`Error handling user presence for ${userId}:`, error);
-      socket.close(1011, "Internal server error"); // Close connection with an error code
+      socket.close(1011, "Internal server error");
     }
   });
 
   return wss;
 };
 
-/**
- * Broadcasts a message to all connected clients.
- */
+
+export const notifyGroupMembers = async (groupId: string, message: Object) => {
+  try {
+
+    const groupMembers = await prisma.groupMember.findMany({
+      where: {
+        groupId,
+      },
+      select: { userId: true },
+    });
+
+
+    groupMembers.forEach(({ userId }) => {
+      const socket = userSocket.get(userId);
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify(message));
+      }
+    });
+    
+  } catch (error) {
+    console.error("Error notifying group members", error);
+  }
+};
+
 const broadcast = (wss: WebSocketServer, message: string) => {
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {

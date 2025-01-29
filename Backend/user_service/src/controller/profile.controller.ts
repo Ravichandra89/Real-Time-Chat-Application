@@ -84,3 +84,5 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     return apiResponse(res, 500, false, "Error updating user profile");
   }
 };
+
+

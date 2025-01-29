@@ -10,6 +10,7 @@ import webSocketSetUp from "./websocket/webSocket.manager";
 import userRouter from "./routes/user.route";
 import profileRouter from "./routes/profile.route";
 import presenceRouter from "./routes/presence.route";
+import groupRouter from "./routes/group.routes";
 
 const app = express();
 const server = http.createServer(app);
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/user/profile", profileRouter);
 app.use("/api/v1/user/presence", presenceRouter);
+app.use("/api/v1/group ")
 
 // Start Websocket
 webSocketSetUp(server);
