@@ -59,7 +59,6 @@ const webSocketSetUp = (server: http.Server) => {
   return wss;
 };
 
-
 export const notifyGroupMembers = async (groupId: string, message: Object) => {
   try {
 
