@@ -100,3 +100,6 @@ export const startWebSocketServer = () => {
 };
 
 connectKafkaProducer();
+
+// Start WebSocketServer
+startWebSocketServer();

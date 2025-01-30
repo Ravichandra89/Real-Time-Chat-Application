@@ -2,7 +2,7 @@ import { WebSocket, WebSocketServer } from "ws";
 import { Kafka } from "kafkajs";
 
 const kafka = new Kafka({
-  clientId: "ws-server-2", 
+  clientId: "ws-server-2",
   brokers: ["localhost:9092"],
 });
 
@@ -16,11 +16,11 @@ const connectKafkaProducer = async () => {
 const sendRegisterEvent = async (userId: string, serverId: string) => {
   try {
     await producer.send({
-      topic: "ws-manager-events", 
+      topic: "ws-manager-events",
       messages: [
         {
           value: JSON.stringify({
-            action: "register", 
+            action: "register",
             userId,
             serverId,
             timestamps: new Date().toISOString(),
@@ -39,11 +39,11 @@ const sendRegisterEvent = async (userId: string, serverId: string) => {
 const sendUnregisterEvent = async (userId: string) => {
   try {
     await producer.send({
-      topic: "ws-manager-events", 
+      topic: "ws-manager-events",
       messages: [
         {
           value: JSON.stringify({
-            action: "unregister", 
+            action: "unregister",
             userId,
             timestamps: new Date().toISOString(),
           }),
@@ -95,3 +95,6 @@ export const startWebSocketServer = () => {
 };
 
 connectKafkaProducer();
+
+// Start WebSocketServer
+startWebSocketServer();
