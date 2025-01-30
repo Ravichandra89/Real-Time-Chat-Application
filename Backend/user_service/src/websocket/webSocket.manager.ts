@@ -7,7 +7,7 @@ import {
 } from "../controller/presence.controller";
 import http from "http";
 
-const userSocket = new Map<string, WebSocket>(); // Store userId -> WebSocket mapping
+const userSocket = new Map<string, WebSocket>(); 
 
 const webSocketSetUp = (server: http.Server) => {
   const wss = new WebSocketServer({ server });
