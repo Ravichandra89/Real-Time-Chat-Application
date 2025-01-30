@@ -58,6 +58,32 @@ const sendUnregisterEvent = async (userId: string) => {
   }
 };
 
+const sendChatMessageToKafka = async (
+  senderId: string,
+  receiverId: string,
+  message: string
+) => {
+  try {
+    await producer.send({
+      topic: "chat-messages",
+      messages: [
+        {
+          value: JSON.stringify({
+            action: "send-message",
+            senderId,
+            receiverId,
+            message,
+            timestamp: new Date().toISOString(),
+          }),
+        },
+      ],
+    });
+    console.log(`Kafka message sent to chat ${senderId} -> ${receiverId}`);
+  } catch (error) {
+    console.error("Failed to send chat message to kafka", error);
+  }
+};
+
 // Setup the WebSocket Server
 const clients = new Map<string, WebSocket>();
 
@@ -81,8 +107,28 @@ export const startWebSocketServer = () => {
     // Send Kafka message for user registration to ws-manager
     sendRegisterEvent(userId as string, serverId as string);
 
-    ws.on("message", (message) => {
-      console.log(`Received message from ${userId}: ${message}`);
+    // ws.on("message", (message) => {
+    //   console.log(`Received message from ${userId}: ${message}`);
+    // });
+
+    ws.on("message", async (messageData) => {
+      try {
+        const { receiverId, message } = JSON.parse(messageData.toString());
+
+        if (!receiverId || !message) {
+          console.error("Invalid message data");
+          return;
+        }
+
+        console.log(
+          `Received message from ${userId} to ${receiverId}: ${message}`
+        );
+
+        // Forward Message to kafka for ChatService
+        await sendChatMessageToKafka(userId, receiverId, message);
+      } catch (error) {
+        console.error("Error processing WebSocket message", error);
+      }
     });
 
     ws.on("close", () => {
