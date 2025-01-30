@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es6", // The JavaScript version to output
+    "module": "commonjs", // Module system used in Node.js
+    "outDir": "./dist", // Output directory for compiled files
+    "rootDir": "./src", // Input directory for source files
+    "strict": true, // Enable strict type-checking
+    "esModuleInterop": true, // Allow import/export compatibility
+    "resolveJsonModule": true, // Enable importing JSON files
+    "skipLibCheck": true // Skip checking type definitions of libraries
+  },
+  "include": ["src/**/*"], // Include all files in the src folder
+  "exclude": ["node_modules"] // Exclude the node_modules folder
+}
