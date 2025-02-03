@@ -1,14 +1,9 @@
-import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
+import { startProducer } from "./kafka/kafka.producer";
+import { startConsumer } from "./kafka/kafka.consumer";
 
-const app = express();
+const startServices = async () => {
+  await startProducer();
+  await startConsumer();
+};
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-app.use(cookieParser());
-
-// Define Here the Routes
-
-export default app;
+startServices();
